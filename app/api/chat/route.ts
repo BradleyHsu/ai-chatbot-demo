@@ -12,10 +12,12 @@ const openai = new OpenAIApi(config);
 
 // POST localhost:3000/api/chat
 export async function POST(request: Request) {
-    const { messages } = await request.json(); // { messages: [] }
+    const req = await request; // { messages: [] }
+    const json = await req.json();
+    const messages = json['talkMessages'];
+    console.log(messages);
 
     // messages [{ user and he says "hello there" }]
-    console.log(messages);
 
     // GPT-4 system message
     // system message tells GPT-4 how to act
@@ -23,17 +25,16 @@ export async function POST(request: Request) {
 
     // createChatCompletion (get response from GPT-4)
     const response = await openai.createChatCompletion({
-        model: 'gpt-4',
-        stream: true,
+        model: 'gpt-3.5-turbo-0613',
         messages: [
-            { role: "system", content: "You are a helpful assistant. You explain software concepts simply to intermediate programmers."},
             ...messages
-        ]
+        ],
+        stream: true
     })
+    const stream = OpenAIStream(response);
 
-    // create a stream of data from OpenAI (stream data to the frontend)
-    const stream = await OpenAIStream(response);
-
-    // send the stream as a response to our client / frontend
     return new StreamingTextResponse(stream);
+
+    const response_json = await response.json();
+    return new Response(JSON.stringify(response_json["choices"][0]["message"]))
 }
