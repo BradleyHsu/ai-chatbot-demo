@@ -1,13 +1,7 @@
 "use client"
-import { useChat, Message } from "ai/react"
 import { useState, useEffect } from "react"
-import { resourceLimits } from "worker_threads";
 
 export default function ChatComponent() {
-    // Vercel AI SDK (ai package) useChat()
-    // useChat -> handles messages for us, user input, handling user submits, etc.
-    const { input, handleInputChange, handleSubmit, isLoading, messages } = useChat();
-    // messages -> [user asks a question, gpt-4 response, user asks again, gpt-4 responds]
     const [isRecording, setIsRecording] = useState(false);
     const [talkMessages, setTalkMessages] = useState([{
         role: "system",
@@ -195,38 +189,8 @@ export default function ChatComponent() {
     };
 
     return (
-        <div>
-            {messages.map((message : Message) => {
-                return (
-                    <div key={message.id}>
-                        {/*  Name of person talking */}
-                        {
-                            message.role === "assistant"
-                            ?
-                            <h3 className="text-lg font-semibold mt-2">
-                                GPT-4
-                            </h3>
-                            :
-                            <h3 className="text-lg font-semibold mt-2">
-                                User
-                            </h3>
-                        }
-                        
-                        {/* Formatting the message */}
-                        {message.content.split("\n").map((currentTextBlock: string, index : number) => {
-                            if(currentTextBlock === "") {
-                                return <p key={message.id + index}>&nbsp;</p> // " "
-                            } else {
-                                return <p key={message.id + index}>{currentTextBlock}</p> // "Cooper Codes is a YouTuber"
-                            }
-                        })}
-                    </div>
-                )
-            })}
-
                 <button type="button" onMouseDown={handleStartRecording}>
                     {isRecording ? 'Recording...' : 'Start Recording'}
                 </button>
-        </div>
     )
 }

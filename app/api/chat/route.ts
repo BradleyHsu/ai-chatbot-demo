@@ -17,12 +17,6 @@ export async function POST(request: Request) {
     const messages = json['talkMessages'];
     console.log(messages);
 
-    // messages [{ user and he says "hello there" }]
-
-    // GPT-4 system message
-    // system message tells GPT-4 how to act
-    // it should always be at the front of your array
-
     // createChatCompletion (get response from GPT-4)
     const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo-0613',
@@ -34,7 +28,4 @@ export async function POST(request: Request) {
     const stream = OpenAIStream(response);
 
     return new StreamingTextResponse(stream);
-
-    const response_json = await response.json();
-    return new Response(JSON.stringify(response_json["choices"][0]["message"]))
 }
